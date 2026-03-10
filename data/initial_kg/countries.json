@@ -1,0 +1,32 @@
+[
+  {
+    "id": "USA",
+    "name": "United States of America",
+    "type": "COUNTRY",
+    "properties": {
+      "gdp": 25000,
+      "nuclear_weapons": 5550,
+      "regime_type": "democracy"
+    }
+  },
+  {
+    "id": "CHN",
+    "name": "China",
+    "type": "COUNTRY",
+    "properties": {
+      "gdp": 17700,
+      "nuclear_weapons": 350,
+      "regime_type": "autocracy"
+    }
+  },
+  {
+    "id": "TWN",
+    "name": "Taiwan",
+    "type": "COUNTRY",
+    "properties": {
+      "gdp": 750,
+      "nuclear_weapons": 0,
+      "regime_type": "democracy"
+    }
+  }
+]

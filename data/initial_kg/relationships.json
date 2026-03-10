@@ -1,0 +1,26 @@
+[
+    {
+        "source_id": "CHN",
+        "target_id": "TWN",
+        "type": "HOSTILE_TO",
+        "properties": {
+            "tension": 85
+        }
+    },
+    {
+        "source_id": "USA",
+        "target_id": "TWN",
+        "type": "SUPPORTS",
+        "properties": {
+            "arms_sales": true
+        }
+    },
+    {
+        "source_id": "CHN",
+        "target_id": "TWN",
+        "type": "TECH_DEPENDENT_ON",
+        "properties": {
+            "dependency": 0.92
+        }
+    }
+]

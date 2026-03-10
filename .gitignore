@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Vite cache
+.vite/
+
+# Data & logs
+*.log
+data/event_log_fallback.jsonl
+
+# Jupyter
+.ipynb_checkpoints/
+
+# mypy / pytest
+.mypy_cache/
+.pytest_cache/
+htmlcov/
+.coverage

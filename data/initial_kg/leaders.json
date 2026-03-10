@@ -1,0 +1,11 @@
+[
+    {
+        "id": "LEADER_XI_JINPING",
+        "name": "Xi Jinping",
+        "type": "LEADER",
+        "properties": {
+            "title": "President of the People's Republic of China",
+            "stability": 0.95
+        }
+    }
+]

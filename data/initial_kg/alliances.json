@@ -1,0 +1,11 @@
+[
+    {
+        "id": "NATO",
+        "name": "North Atlantic Treaty Organization",
+        "type": "ALLIANCE",
+        "properties": {
+            "member_count": 32,
+            "established": "1949-04-04"
+        }
+    }
+]

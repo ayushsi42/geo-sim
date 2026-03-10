@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   Geo-Sim — Geopolitical Intelligence Platform
+   Core Design System
+   ========================================================= */
+
+:root {
+  --navy-950: #050810;
+  --navy-900: #0a0e1a;
+  --navy-800: #0f1629;
+  --navy-700: #161e38;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-indigo: #6366f1;
+  --glass-bg: rgba(15, 22, 41, 0.65);
+  --glass-border: rgba(59, 130, 246, 0.12);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--navy-950); }
+::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.45); }
+
+/* Selection */
+::selection { background: rgba(59, 130, 246, 0.3); color: #fff; }
+
+/* ---- Glass Card System ---- */
+@layer components {
+  .glass-panel {
+    @apply relative overflow-hidden rounded-xl border border-white/[0.06];
+    background: linear-gradient(135deg, rgba(15,22,41,0.7) 0%, rgba(10,14,26,0.85) 100%);
+    backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: 
+      0 0 0 1px rgba(59,130,246,0.05),
+      0 4px 24px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 0%, rgba(59,130,246,0.06), transparent 60%);
+    pointer-events: none;
+  }
+
+  .glass-card {
+    @apply glass-panel p-5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .glass-card:hover {
+    border-color: rgba(59, 130, 246, 0.15);
+    box-shadow: 
+      0 0 0 1px rgba(59,130,246,0.1),
+      0 8px 32px rgba(0,0,0,0.4),
+      0 0 60px rgba(59,130,246,0.04),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+    transform: translateY(-1px);
+  }
+
+  .glass-card-flush {
+    @apply glass-panel;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #3b82f6, #06b6d4, #6366f1);
+  }
+  .gradient-text-warm {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #f59e0b, #ef4444);
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+    box-shadow: 0 0 6px currentColor;
+  }
+  .status-dot-live {
+    @apply status-dot bg-emerald-400 text-emerald-400;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Severity badges */
+  .severity-critical { @apply bg-red-500/15 text-red-400 border border-red-500/20; }
+  .severity-high { @apply bg-orange-500/15 text-orange-400 border border-orange-500/20; }
+  .severity-medium { @apply bg-amber-500/15 text-amber-400 border border-amber-500/20; }
+  .severity-low { @apply bg-emerald-500/15 text-emerald-400 border border-emerald-500/20; }
+
+  /* Metric emphasis */
+  .metric-value {
+    @apply text-3xl font-bold font-mono tracking-tight;
+    text-shadow: 0 0 20px rgba(59,130,246,0.3);
+  }
+
+  /* Animated border */
+  .border-glow {
+    position: relative;
+  }
+  .border-glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.4), transparent, rgba(6,182,212,0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* Background grid effect */
+.bg-grid {
+  background-image: 
+    linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Noise texture overlay */
+.noise-overlay::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Scan line effect */
+.scanline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Animated underline */
+.animated-underline {
+  position: relative;
+}
+.animated-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+  transition: width 0.3s ease;
+}
+.animated-underline:hover::after {
+  width: 100%;
+}
+
+/* Pulse ring for alerts */
+@keyframes ping-slow {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+.ping-slow { animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+/* Recharts overrides */
+.recharts-default-tooltip {
+  background: rgba(15, 22, 41, 0.95) !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+.recharts-tooltip-label { color: #94a3b8 !important; }
+.recharts-tooltip-item { color: #e2e8f0 !important; }
