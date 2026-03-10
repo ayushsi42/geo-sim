@@ -7,9 +7,9 @@ A neuro-symbolic geopolitical simulation engine that ingests live global news vi
 | Tool | Version | Check |
 |------|---------|-------|
 | **Docker & Docker Compose** | any recent | `docker --version` |
-| **Node.js** | ≥ 20 | `node -v` |
-| **npm** | ≥ 9 | `npm -v` |
 | **OpenAI API Key** | — | needed for event classification & simulation |
+
+That's it. Everything else runs inside Docker.
 
 ## Quick Start
 
@@ -20,88 +20,71 @@ git clone <repo-url>
 cd geo-sim
 ```
 
-### 2. Start infrastructure (Docker)
-
-This boots Neo4j, Redis, TimescaleDB, Qdrant, Kafka + Zookeeper — all pre-configured.
+### 2. Create `.env` file
 
 ```bash
-docker-compose up -d
+echo "OPENAI_API_KEY=sk-...your-key-here" > .env
 ```
 
-Wait ~30 seconds for all containers to become healthy. Verify with:
+### 3. Start everything
 
 ```bash
-docker ps          # all 6 containers should be "Up"
+docker-compose up -d --build
 ```
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| Neo4j | 7474 (browser), 7687 (bolt) | Knowledge graph |
-| Redis | 6379 | State store |
-| TimescaleDB | 5432 | Time-series data |
-| Qdrant | 6333 | Vector search |
-| Kafka | 9092 | Event bus |
-| Zookeeper | 2181 | Kafka coordination |
+This builds and starts **9 containers** — the full platform:
 
-### 3. Create `.env` file
+| Container | Port | What it does |
+|-----------|------|-------------|
+| `geosim_frontend` | **5173** | React dashboard (nginx) |
+| `geosim_backend` | **8000** | FastAPI server + API docs |
+| `geosim_ingestion` | — | RSS ingestion pipeline (auto-runs) |
+| `geosim_neo4j` | 7474, 7687 | Knowledge graph |
+| `geosim_redis` | 6379 | State store |
+| `geosim_postgres` | 5432 | Time-series data |
+| `geosim_qdrant` | 6333 | Vector search |
+| `geosim_kafka` | 9092 | Event bus |
+| `geosim_zookeeper` | 2181 | Kafka coordination |
 
-Create a `.env` file in the project root:
+Wait ~60 seconds for all services to initialize, then:
+
+- **Dashboard** → http://localhost:5173
+- **API Docs** → http://localhost:8000/docs
+- **Neo4j Browser** → http://localhost:7474
+
+### 4. Bootstrap data (first time only)
+
+After the containers are up, seed the knowledge graph and state:
 
 ```bash
-OPENAI_API_KEY=sk-...your-key-here
+docker exec geosim_backend python scripts/bootstrap_kg.py
+docker exec geosim_backend python scripts/bootstrap_state.py
 ```
 
-All other settings (Neo4j, Redis, Kafka, etc.) use localhost defaults and work out of the box with the Docker setup. See `src/shared/config.py` for the full list of overridable vars.
+Done. The ingestion pipeline is already running and pulling live events.
 
-### 4. Install backend
+---
+
+## Local Development (without Docker for app code)
+
+If you want to run the backend/frontend locally for development while keeping infrastructure in Docker:
 
 ```bash
+# Start only infrastructure
+docker-compose up -d neo4j redis postgres qdrant zookeeper kafka
+
+# Backend
 pip install -e .
-```
+uvicorn src.api.main:app --reload --port 8000
 
-### 5. Bootstrap the knowledge graph
-
-Populates Neo4j with initial countries, leaders, alliances, and relationships:
-
-```bash
-python scripts/bootstrap_kg.py
-```
-
-### 6. Bootstrap global state
-
-Loads the initial `GlobalState` into Redis:
-
-```bash
-python scripts/bootstrap_state.py
-```
-
-### 7. Start the API server
-
-```bash
-uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-API docs are available at **http://localhost:8000/docs**.
-
-### 8. Start live event ingestion
-
-In a **separate terminal**, start the RSS ingestion pipeline. This continuously pulls from BBC, Al Jazeera, NPR, and The Guardian, classifies events, and publishes to Kafka:
-
-```bash
+# Ingestion (separate terminal)
 python scripts/run_ingestion.py
+
+# Frontend (separate terminal)
+cd frontend && npm install && npm run dev
 ```
 
-### 9. Start the frontend
-
-In another **separate terminal**:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open **http://localhost:5173** — the Geo-Sim dashboard.
+---
 
 ## Pages
 
@@ -126,7 +109,11 @@ Open **http://localhost:5173** — the Geo-Sim dashboard.
 ## Project Structure
 
 ```
-├── frontend/              React + Vite + Tailwind dashboard
+├── Dockerfile             Backend image
+├── docker-compose.yml     All 9 services
+├── frontend/
+│   ├── Dockerfile         Frontend image (nginx)
+│   ├── nginx.conf         Reverse proxy config
 │   └── src/
 │       ├── pages/         Dashboard, Events, WorldState, Simulate, Analytics
 │       ├── components/    Layout, Sidebar
@@ -141,17 +128,12 @@ Open **http://localhost:5173** — the Geo-Sim dashboard.
 │   ├── world_model/       LLM client, analog retriever, prediction models
 │   └── shared/            Config, logging
 ├── scripts/               Bootstrap & ingestion runners
-├── data/                  Initial KG data, historical events
-└── docker-compose.yml     All infrastructure services
+└── data/                  Initial KG seed data
 ```
 
 ## Stopping Everything
 
 ```bash
-# Frontend: Ctrl+C in the terminal running npm run dev
-# Ingestion: Ctrl+C in the terminal running run_ingestion.py
-# API server: Ctrl+C in the terminal running uvicorn
-# Infrastructure:
 docker-compose down
 ```
 
