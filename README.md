@@ -131,14 +131,36 @@ cd frontend && npm install && npm run dev
 └── data/                  Initial KG seed data
 ```
 
-## Stopping Everything
+## Docker Lifecycle
 
 ```bash
-docker-compose down
+# DAILY USE — start/stop without losing data
+docker-compose up -d              # start all containers
+docker-compose stop               # pause everything (data preserved)
+docker-compose start              # resume paused containers
+
+# AFTER CODE CHANGES — rebuild only what changed
+docker-compose up -d --build      # rebuilds changed images, restarts
+
+# FULL RESET — wipe everything and start fresh
+docker-compose down -v            # stop + delete all data
+docker-compose up -d --build      # clean start
 ```
 
-To also wipe all stored data (Neo4j, Redis, Postgres, Qdrant, Kafka):
+**What persists across restarts:**
+- **Images** — cached on disk, fast rebuilds
+- **Volumes** — Neo4j KG, Redis state, Postgres data, Qdrant vectors (survives `down`, deleted by `down -v`)
+- **Containers** — ephemeral, recreated from images
+
+## Useful Commands
 
 ```bash
-docker-compose down -v
+docker ps                              # running containers
+docker ps -a                           # all containers (including stopped)
+docker logs geosim_backend             # check a container's logs
+docker logs -f geosim_ingestion        # follow logs live (Ctrl+C to stop)
+docker exec -it geosim_backend bash    # shell into a container
+docker images                          # cached images
+docker system df                       # disk usage
+docker system prune                    # clean up unused images/containers
 ```

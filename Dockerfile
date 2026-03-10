@@ -8,12 +8,15 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml ./
-RUN pip install --no-cache-dir -e . && \
+COPY src/ src/
+
+RUN pip install --no-cache-dir . && \
     python -m spacy download en_core_web_sm
 
-COPY src/ src/
 COPY scripts/ scripts/
 COPY data/ data/
+
+ENV PYTHONPATH=/app
 
 EXPOSE 8000
 
